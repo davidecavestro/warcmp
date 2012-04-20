@@ -1,4 +1,14 @@
 Warcmp is a tool that 1. expands two WebArchives 2. expands their jars 3. launches jmeld (a great visual diff tool) on the expanded dirs. Nothing more, nothing less.
+By default every jar within the war is decompressed so that given a jar file foo.jar in WEB-INF/lib you will get the following structure
+
+.WEB-INF/lib
+----
+.
+|-- foo.jar
+|-- foo.jar.inflated
+|   |-- com
+|   |   |-- acme
+----
 
 Usage
 -----
