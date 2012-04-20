@@ -1,4 +1,4 @@
-Warcmp is a tool that 1. expands two WebArchives 2. expands their jars 3. launches jmeld (a visual diff tool jmeld) on the expanded dirs. Nothing more, nothing less.
+Warcmp is a tool that 1. expands two WebArchives 2. expands their jars 3. launches jmeld (a great visual diff tool) on the expanded dirs. Nothing more, nothing less.
 
 Usage
 -----
@@ -9,4 +9,10 @@ Optional switches
 * "-Pnojars" disables jar contents extraction
 
 * "-Pnogui"  disables jmeld launch
+
+Credits
+-------
+Many thanks to:
+* http://gradle.org/ [gradle team]
+* http://sourceforge.net/projects/jmeld/ [jmeld team]
 
