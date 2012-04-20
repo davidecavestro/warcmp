@@ -1,0 +1,1 @@
+Warcmp is a tool that 1.expand two WebArchives, 2. expand their jars and 3. launches jmeld (a visual diff tool jmeld) on the expanded dirs. Nothing more, nothing less.
