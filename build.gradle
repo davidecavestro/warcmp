@@ -1,0 +1,86 @@
+task wrapper (type: Wrapper) {
+	gradleVersion = '1.0-rc-1'
+}
+
+defaultTasks 'clean', 'run'
+
+task clean (type: Delete) {
+	description = "Decomprime i war da confrontare"
+	delete (new File (buildDir, 'war1'))
+	delete (new File (buildDir, 'war2'))
+}
+
+task run << {
+	description = "Decomprime e confronta i war"
+
+	if (!project.hasProperty('nogui')) {
+		ant.java(jar:"lib${File.separator}JMeld-2.1.jar",fork:true) {
+			arg (value: new File (buildDir, 'war1').path)
+			arg (value: new File (buildDir, 'war2').path)
+		}
+	}
+}
+
+tasks.whenTaskAdded { task ->
+	if (task.name.startsWith("explode")) {
+		run.dependsOn task
+	}
+}
+
+['war1', 'war2'].each { def warName ->
+
+	tasks.add (name: "explode${warName}", type: Copy) {
+		description = "Decomprime il war ${warName}"
+		group = 'build'
+		
+		destinationDir = buildDir
+
+		def actualWar = project."${warName}"
+//		doLast {
+			logger.info "Inflating ${actualWar}"
+			into (warName) {
+				from zipTree (actualWar)
+			}
+//		}
+	}
+
+	if (!project.hasProperty('nojars')) {
+		tasks.add (name: "explode${warName}Jars"/*, type: Copy*/) {
+			description = "Decomprime i jar del ${warName}"
+			group = 'build'
+			dependsOn "explode${warName}"
+
+//			def tree = zipTree(project."${warName}").matching { include '**/*.jar' }
+			def tree = fileTree(new File (buildDir, warName)).matching { include '**/*.jar' }
+
+			// raccoglie tutti i JAR 
+			def jarFiles = [] as HashSet
+			def wardir = warName
+//			outputs.dir wardir
+//			inputs.files {
+				logger.debug "Detecting jars for ${tree}"
+				tree.each {File file ->
+					logger.debug "Adding ${file} to jarFiles for ${wardir}"
+					jarFiles << file
+				}
+//				return jarFiles
+//			}
+
+			doLast {
+				logger.debug "Processing ${jarFiles}"
+				jarFiles.each {File file ->
+					def inflated = new File (file.parent, "${file.name}.inflated")
+					inflated.mkdirs ()
+					logger.debug "Inflating ${file} into ${inflated}"
+					copy {
+						from zipTree (file)
+						into inflated
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
